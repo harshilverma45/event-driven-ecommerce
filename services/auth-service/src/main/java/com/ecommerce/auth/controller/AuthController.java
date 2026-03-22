@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,19 +25,14 @@ public class AuthController {
 
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
-    private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
-    private final AuthEventProducer authEventProducer;
+    @Autowired
+    private UserRepository userRepository;
 
-    public AuthController(
-            UserRepository userRepository,
-            JwtUtil jwtUtil,
-            AuthEventProducer authEventProducer
-    ) {
-        this.userRepository = userRepository;
-        this.jwtUtil = jwtUtil;
-        this.authEventProducer = authEventProducer;
-    }
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private AuthEventProducer authEventProducer;
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest loginRequest) {

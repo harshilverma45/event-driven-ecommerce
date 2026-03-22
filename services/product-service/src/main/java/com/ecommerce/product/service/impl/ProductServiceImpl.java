@@ -5,18 +5,15 @@ import com.ecommerce.product.exception.ProductNotFoundException;
 import com.ecommerce.product.repository.ProductRepository;
 import com.ecommerce.product.service.ProductService;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
 public class ProductServiceImpl implements ProductService {
-
-    private final ProductRepository productRepository;
-
-    public ProductServiceImpl(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     public Product createProduct(Product product) {
@@ -58,3 +55,4 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(productId);
     }
 }
+

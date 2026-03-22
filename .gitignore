@@ -1,12 +1,44 @@
+# Build
 target/
-**/target/
-node_modules/
-.env
-.idea
-.vscode
+*.jar
+*.war
+
+# Logs
 *.log
-tools/
+
+# Environment
+.env
+
+# Node
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Maven local repo (if inside project)
+.m2/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Kafka / infra (your custom ones)
 infrastructure/kafka/kafka_2.13-3.7.2/
 infrastructure/kafka/runtime/
+
+# Local service-specific maven setups
 services/**/maven-repo/
 services/**/maven-home/
+
+# Local tools / binaries
+tools/
+
+# Local configs
+settings-local.xml
+
+# Runtime / temp files
+*.err
+*.class
+*.zip
