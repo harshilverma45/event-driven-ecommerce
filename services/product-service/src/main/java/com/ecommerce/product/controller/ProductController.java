@@ -3,6 +3,7 @@ package com.ecommerce.product.controller;
 import com.ecommerce.product.entity.Product;
 import com.ecommerce.product.service.ProductService;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,12 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
-
-    private final ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    @Autowired
+    private ProductService productService;
 
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
@@ -51,3 +48,4 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 }
+

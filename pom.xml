@@ -1,0 +1,14 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.yourproject</groupId>
+    <artifactId>event-driven-ecommerce</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>services/auth-service</module>
+        <module>services/product-service</module>
+        <module>services/api-gateway</module>
+    </modules>
+</project>
