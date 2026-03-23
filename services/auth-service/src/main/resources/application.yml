@@ -2,12 +2,14 @@ server:
   port: 8081
 
 spring:
+  config:
+    import: optional:file:.env[.properties]
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/auth_db
-    username: postgres
-    password: postgres
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -17,7 +19,7 @@ spring:
       hibernate:
         format_sql: true
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
     consumer:
       group-id: auth-service-group
       auto-offset-reset: earliest
@@ -26,9 +28,19 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - email
+              - profile
 
 jwt:
-  secret: mySecretKeyForJwtGeneration123456
+  secret: ${JWT_SECRET}
   expiration: 86400000
 
 app:

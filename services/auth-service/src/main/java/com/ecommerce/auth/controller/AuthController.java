@@ -1,9 +1,12 @@
 package com.ecommerce.auth.controller;
 
 import com.ecommerce.auth.dto.LoginRequest;
+import com.ecommerce.auth.entity.AuthMethod;
+import com.ecommerce.auth.entity.AuthProvider;
 import com.ecommerce.auth.entity.User;
 import com.ecommerce.auth.event.UserAuthenticatedEvent;
 import com.ecommerce.auth.producer.AuthEventProducer;
+import com.ecommerce.auth.repository.AuthMethodRepository;
 import com.ecommerce.auth.repository.UserRepository;
 import com.ecommerce.auth.security.JwtUtil;
 import java.time.Instant;
@@ -32,6 +35,9 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @Autowired
+    private AuthMethodRepository authMethodRepository;
+
+    @Autowired
     private AuthEventProducer authEventProducer;
 
     @PostMapping("/login")
@@ -39,9 +45,33 @@ public class AuthController {
         User user = userRepository.findByEmail(loginRequest.getEmail())
             .orElse(null);
 
-        if (user == null || !user.getPassword().equals(loginRequest.getPassword())) {
+        if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("message", "Invalid email or password"));
+        }
+
+        AuthMethod localAuthMethod = authMethodRepository
+            .findByUserAndProvider(user, AuthProvider.LOCAL)
+            .orElse(null);
+
+        if (localAuthMethod != null) {
+            if (
+                localAuthMethod.getPassword() == null
+                    || !localAuthMethod.getPassword().equals(loginRequest.getPassword())
+            ) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Invalid email or password"));
+            }
+        } else {
+            AuthProvider provider = user.getProvider() != null ? user.getProvider() : AuthProvider.LOCAL;
+            if (provider != AuthProvider.LOCAL) {
+                throw new RuntimeException("Use Google login or set password");
+            }
+
+            if (user.getPassword() == null || !user.getPassword().equals(loginRequest.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Invalid email or password"));
+            }
         }
 
         String token = jwtUtil.generateToken(user.getEmail());

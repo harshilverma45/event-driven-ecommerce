@@ -1,6 +1,7 @@
 package com.ecommerce.auth.producer;
 
 import com.ecommerce.auth.event.UserAuthenticatedEvent;
+import com.ecommerce.auth.event.UserCreatedEvent;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,15 @@ public class AuthEventProducer {
         );
     }
 
-    private String toJson(UserAuthenticatedEvent event) {
+    public void sendUserCreatedEvent(UserCreatedEvent event) {
+        kafkaTemplate.send("user-created-events", event.getEmail(), toJson(event));
+    }
+
+    private String toJson(Object event) {
         try {
             return objectMapper.writeValueAsString(event);
         } catch (JsonProcessingException ex) {
-            throw new IllegalStateException("Failed to serialize UserAuthenticatedEvent", ex);
+            throw new IllegalStateException("Failed to serialize event for Kafka publishing", ex);
         }
     }
 }
