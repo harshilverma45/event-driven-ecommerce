@@ -1,8 +1,13 @@
 import java.sql.*;
 public class QueryUser {
   public static void main(String[] args) throws Exception {
-    String url = "jdbc:postgresql://localhost:5432/auth_db";
-    try (Connection c = DriverManager.getConnection(url, "postgres", "postgres");
+    String url = System.getenv("DB_URL");
+    String username = System.getenv("DB_USERNAME");
+    String password = System.getenv("DB_PASSWORD");
+    if (url == null || username == null || password == null) {
+      throw new IllegalStateException("Set DB_URL, DB_USERNAME, and DB_PASSWORD environment variables.");
+    }
+    try (Connection c = DriverManager.getConnection(url, username, password);
          Statement s = c.createStatement();
          ResultSet rs = s.executeQuery("select id, email, password, name from users order by id limit 1")) {
       if (rs.next()) {
