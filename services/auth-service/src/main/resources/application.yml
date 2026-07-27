@@ -3,14 +3,17 @@ server:
 
 spring:
   config:
-    import: optional:file:.env[.properties]
+    import: optional:file:./.env[.properties]
+
   application:
     name: auth-service
+
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/auth_db
+    username: postgres
+    password: postgres
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,8 +21,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
       group-id: auth-service-group
       auto-offset-reset: earliest
@@ -28,6 +32,7 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
   security:
     oauth2:
       client:
@@ -39,11 +44,19 @@ spring:
               - email
               - profile
 
+eureka:
+  client:
+    enabled: false
+
 jwt:
-  secret: ${JWT_SECRET}
+  secret: mySuperSecretKey123456789abcdefgVeryStrongKey12345
   expiration: 86400000
 
 app:
   kafka:
     topics:
       user-authenticated: auth.user.authenticated.v1
+
+logging:
+  level:
+    org.springframework.boot.context.config: DEBUG

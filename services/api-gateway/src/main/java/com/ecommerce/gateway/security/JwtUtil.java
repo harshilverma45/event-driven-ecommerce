@@ -1,5 +1,6 @@
 package com.ecommerce.gateway.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -18,15 +19,29 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parserBuilder()
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
-                .parseClaimsJws(token);
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            extractAllClaims(token);
             return true;
         } catch (JwtException | IllegalArgumentException exception) {
             return false;
         }
+    }
+
+    public String extractUsername(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+
+    public String extractUserId(String token) {
+        Object userId = extractAllClaims(token).get("userId");
+        return userId != null ? String.valueOf(userId) : null;
     }
 }
